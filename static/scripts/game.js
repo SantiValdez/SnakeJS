@@ -44,10 +44,6 @@ var Game = {
     },
 
     create: function(){
-        
-        // game.time.events.add(5000, function(){
-        //     console.log("/////////////////////////////////");
-        // });
 
         game.stage.backgroundColor = "#36393d";
     
@@ -106,8 +102,13 @@ var Game = {
                 pickUpApple();
                 extendSnake();
             }
-    
-            checkOutOfBounds();
+            
+            //if wrap mode is chosen wrap snake, otherwise make walls deadly
+            if(wrapMode){
+                wrapSnake();
+            } else {
+                containSnake();
+            }
 
             var firstSegment = snake[snake.length - 1];
             var lastSegment = snake.shift();
@@ -143,7 +144,7 @@ var Game = {
     }
 }   
 
-function checkOutOfBounds(){
+function wrapSnake(){
     head = snake[snake.length - 1];
     if(head.x < 0){
         head.x = 780;
@@ -156,6 +157,13 @@ function checkOutOfBounds(){
     }
     if(head.y > 780){
         head.y = 0;
+    }
+}
+
+function containSnake(){
+    head = snake[snake.length -1];
+    if(head.x < 0 || head.x > 780 || head.y < 0 || head.y > 780){
+        game.state.start("Over");
     }
 }
 
