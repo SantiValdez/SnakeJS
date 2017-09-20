@@ -26,11 +26,13 @@ var left,
 
 //game vars
 var score,
+    scoreDisplay,
     speed,
     frameRate,
     gameWidth,
     gameHeight,
-    backLayer,         //layers so that snake body goes over the apples
+    appleLayer,         //layers so that snake body goes over the apples
+    snakeLayer,
     frontLayer;
 
     var called = false;
@@ -56,18 +58,27 @@ var Game = {
         appleSpawnRate = 5;
         appleSpawnCounter = 0;
 
-        backLayer = game.add.group();
+        appleLayer = game.add.group();
+        snakeLayer = game.add.group();
         frontLayer = game.add.group();
         score = 0;
         frameRate = 0;
         speed = 0;
         gameWidth = 800;
         gameHeight = 800;
-    
+
+        //score display
+        scoreDisplay = game.add.text(50, 50, "", {
+            font: "60px Ubuntu",
+            fill: "#d7e0ed",
+        });
+        scoreDisplay.alpha = 0.5;
+        frontLayer.add(scoreDisplay);
+
         //generating snake, increasing X each iteration
         for(var i = 0; i < 10; i++){
             snake[i] = game.add.sprite(300 + i * segmentSize, 20 * segmentSize, "snakeBody" );
-            frontLayer.add(snake[i]);
+            snakeLayer.add(snake[i]);
         }
     
         //setting up controls to check if key was JUST pressed
@@ -80,11 +91,14 @@ var Game = {
 
     update: function(){
 
+        game.world.bringToTop(frontLayer);
         getDirection();
     
         speed = Math.min(4, Math.floor(score/2));
         // Increase a counter on every update call.
         frameRate++;
+
+        scoreDisplay.text = score;
 
         if(frameRate % (6 - speed) === 0){
             generateApple();
@@ -218,7 +232,7 @@ function generateApple(){
 
         if(counter === 0){
             apple = game.add.sprite(appleX, appleY, "apple");
-            backLayer.add(apple);
+            appleLayer.add(apple);
         } else {
             console.log("skipping apple generation for now!");
             appleExists = false;
@@ -251,7 +265,7 @@ function extendSnake(){
     newSegment = game.add.sprite(lastSegment.x - segmentSize, lastSegment.y - segmentSize, "snakeBody");
     console.log("added segment!");
     snake.unshift(newSegment);
-    frontLayer.add(newSegment);
+    snakeLayer.add(newSegment);
     snakeExtendCounter = 0;
 }
 

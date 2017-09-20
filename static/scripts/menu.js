@@ -26,11 +26,12 @@ var Menu = {
     create: function(){
 
         game.stage.backgroundColor = "#36393d";
-        title = game.add.text(300, 200, "SnakeJS", {
+        title = game.add.text(250, 200, "SnakeJS", {
             font: "Ubuntu",
             fontWeight: "bold",
-            fontSize: 40,
-            fill: "#d7e0ed"
+            fontSize: 60,
+            fill: "#d7e0ed",
+            align: "center"
         });
 
         play = game.add.text(350, 300, "play", {
@@ -43,10 +44,10 @@ var Menu = {
     },
 
     update: function(){
-        play.events.onInputDown.add(loadGame, this);
+        play.events.onInputDown.add(startGame, this);
     }
 }
 
-function loadGame(){
+function startGame(){
     game.state.start("Game");
 }
