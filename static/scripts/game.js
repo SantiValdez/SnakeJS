@@ -27,7 +27,7 @@ var left,
 //game vars
 var score,
     speed,
-    updateDelay,
+    frameRate,
     gameWidth,
     gameHeight,
     backLayer,         //layers so that snake body goes over the apples
@@ -59,8 +59,8 @@ var Game = {
         backLayer = game.add.group();
         frontLayer = game.add.group();
         score = 0;
+        frameRate = 0;
         speed = 0;
-        updateDelay = 0;
         gameWidth = 800;
         gameHeight = 800;
     
@@ -82,18 +82,11 @@ var Game = {
 
         getDirection();
     
-        // A formula to calculate game speed based on the score.
-        // The higher the score, the higher the game speed, with a maximum of 4;
         speed = Math.min(4, Math.floor(score/2));
-    
         // Increase a counter on every update call.
-        updateDelay++;
+        frameRate++;
 
-        // Do game stuff only if the counter is aliquot to ( X - the game speed ).
-        // The higher the speed, the more frequently this is fulfilled,
-        // making the snake move faster.
-        // if (updateDelay % (6 - speed) === 0){
-        if(updateDelay % 4 === 0){
+        if(frameRate % (6 - speed) === 0){
             generateApple();
             appleSpawnCounter++;
 
@@ -139,7 +132,6 @@ var Game = {
     
             snake.push(lastSegment);
             firstSegment = lastSegment; 
-        // }
         }
 
     }
