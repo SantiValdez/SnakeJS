@@ -15,8 +15,11 @@ var snake,
 var apple,
     appleExists,
     appleSpawnRate,
-    appleSpawnCounter;
+    appleSpawnRate;
 
+//powerUp vars
+var powerUpExists,
+    powerUpSpawnRate;
 
 //controls vars
 var left,
@@ -43,6 +46,7 @@ var Game = {
     preload: function(){
         game.load.image("snakeBody", "/snakeBody.png");
         game.load.image("apple", "/apple.png");
+        game.load.image("aquaPU", "/aquaPU.png");
     },
 
     create: function(){
@@ -56,7 +60,10 @@ var Game = {
 
         appleExists = false;
         appleSpawnRate = 5;
-        appleSpawnCounter = 0;
+        appleSpawnRate = 0;
+
+        powerUpExists = false;
+        powerUpSpawnRate = 0;
 
         appleLayer = game.add.group();
         snakeLayer = game.add.group();
@@ -72,7 +79,7 @@ var Game = {
             font: "60px Ubuntu",
             fill: "#d7e0ed",
         });
-        scoreDisplay.alpha = 0.5;
+        scoreDisplay.alpha = 1;
         frontLayer.add(scoreDisplay);
 
         //generating snake, increasing X each iteration
@@ -102,7 +109,10 @@ var Game = {
 
         if(frameRate % (6 - speed) === 0){
             generateApple();
-            appleSpawnCounter++;
+            appleSpawnRate++;
+
+            generatePowerUp();
+            powerUpSpawnRate++;
 
             checkCollision(snake);
             if(colidedWithApple(head)){
@@ -210,33 +220,48 @@ function checkCollision(snake){
     }
 }
 
+function generatePowerUp(){
+    /* if snake >= 18 && !powerUpExists && powerUpSpawnRate > X
+            give random x and y in the grid
+            isSpaceEmpty(x, y)
+                spawn
+
+    */
+    if(snake.length >= 18 && !powerUpExists && powerUpSpawnRate > 50){
+
+        var position = getRandomPos();
+        if(isSpaceEmpty(position[0], position[1])){
+            powerUp = game.add.sprite(position[0], position[1], "aquaPU");
+            appleLayer.add(powerUp);
+            powerUpExists = true;
+            powerUpSpawnRate = 0;
+        } else {
+            console.log("skipping powerup gen for now!");
+            powerUpExists = false;
+        }
+    }
+}
+
 function generateApple(){
 
-    var counter = 0;  // helper variable to determine if position of apple is not occupied by snake
+    if(!appleExists && appleSpawnRate > 15){
 
-    if(!appleExists && appleSpawnCounter > 15){
 
-        appleSpawnCounter = 0;
-        appleExists = true;
 
-        appleX = getRand(780 / segmentSize); // 780 so that apples dont spawn halfway offscreen
-        appleY = getRand(780 / segmentSize);
-        appleX *= segmentSize;
-        appleY *= segmentSize;
+        var position = getRandomPos();
 
-        for (var i = 0; i < snake.length; i++) {
-            if(appleX === snake[i].x && appleY === snake[i].y){
-                counter++;
-            } 
-        }
+        appleX = position[0];
+        appleY = position[1];
 
-        if(counter === 0){
+        if(isSpaceEmpty(appleX, appleY)){
             apple = game.add.sprite(appleX, appleY, "apple");
             appleLayer.add(apple);
+            appleSpawnRate = 0;
+            appleExists = true;
         } else {
-            console.log("skipping apple generation for now!");
+            console.log("Skipping apple generation for now!");
             appleExists = false;
-        }        
+        }  
     }
 }
 
@@ -251,10 +276,23 @@ function colidedWithApple(head){
     return false;
 }
 
+function isSpaceEmpty(x, y){
+    for (var i = 0; i < snake.length; i++) {
+        if(snake[i].x === x && snake[i].y === y){
+            return false;
+        }
+    }
+
+    if(apple && apple.x === x && apple.y === y){
+        return false;
+    }
+    return true;
+}
+
 function pickUpApple(){
     apple.destroy();
     appleExists = false;
-    appleSpawnCounter = 0;
+    appleSpawnRate = 0;
     score++;
 }
 
@@ -269,6 +307,22 @@ function extendSnake(){
     snakeExtendCounter = 0;
 }
 
-function getRand(max){
-    return Math.floor(Math.random() * max) + 1; //min 20 so that apples dont spawn halfway offscreen
+//returns an array with a valid random X and Y coordinate
+function getRandomPos(){
+    var result = [];
+    var x, y;
+
+    x = random(780 / segmentSize);
+    y = random(780 / segmentSize);
+    x *= segmentSize;
+    y *= segmentSize;
+
+    result.push(x);
+    result.push(y);
+
+    return result;
+}
+
+function random(max){
+    return Math.floor(Math.random() * max) + 1;
 }
