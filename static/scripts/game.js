@@ -18,8 +18,10 @@ var apple,
     appleSpawnRate;
 
 //powerUp vars
-var powerUpExists,
-    powerUpSpawnRate;
+var powerUp,
+    powerUpExists,
+    powerUpSpawnRate,
+    snakeReduceAmount;
 
 //controls vars
 var left,
@@ -38,6 +40,9 @@ var score,
     snakeLayer,
     frontLayer;
 
+//obstacle vars
+var obstacles;
+
     var called = false;
 
 
@@ -47,6 +52,7 @@ var Game = {
         game.load.image("snakeBody", "/snakeBody.png");
         game.load.image("apple", "/apple.png");
         game.load.image("aquaPU", "/aquaPU.png");
+        game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
     },
 
     create: function(){
@@ -64,6 +70,9 @@ var Game = {
 
         powerUpExists = false;
         powerUpSpawnRate = 0;
+        snakeReduceAmount = 3;  // amount to reduce length of snake when powerup picke up
+
+        obstacles = [];
 
         appleLayer = game.add.group();
         snakeLayer = game.add.group();
@@ -80,6 +89,7 @@ var Game = {
             fill: "#d7e0ed",
         });
         scoreDisplay.alpha = 1;
+        scoreDisplay.anchor.set(0.5);
         frontLayer.add(scoreDisplay);
 
         //generating snake, increasing X each iteration
@@ -105,7 +115,7 @@ var Game = {
         // Increase a counter on every update call.
         frameRate++;
 
-        scoreDisplay.text = score;
+        scoreDisplay.text = score * 10;
 
         if(frameRate % (6 - speed) === 0){
             generateApple();
@@ -114,13 +124,23 @@ var Game = {
             generatePowerUp();
             powerUpSpawnRate++;
 
+            if(powerUpExists){
+                powerUp.animations.play("rainbow", 5, true);
+            }
+            
             checkCollision(snake);
+
+            if(colidedWithPowerUp(head)){
+                pickUpPowerUp();
+                createObstacle();
+            }
+
             if(colidedWithApple(head)){
                 pickUpApple();
                 extendSnake();
             }
             
-            //if wrap mode is chosen wrap snake, otherwise make walls deadly
+            //if wrap mode is chosen wrap the snake, otherwise make walls deadly
             if(wrapMode){
                 wrapSnake();
             } else {
@@ -218,20 +238,25 @@ function checkCollision(snake){
             game.state.start("Over");
         }
     }
+
+    if(obstacles.length > 0){
+        for (var i = 0; i < obstacles.length; i++) {
+            if(head.x === obstacles[i].x && head.y === obstacles[i].y){
+                game.state.start("Over");
+            }
+        }
+    }
 }
 
 function generatePowerUp(){
-    /* if snake >= 18 && !powerUpExists && powerUpSpawnRate > X
-            give random x and y in the grid
-            isSpaceEmpty(x, y)
-                spawn
 
-    */
     if(snake.length >= 18 && !powerUpExists && powerUpSpawnRate > 50){
 
         var position = getRandomPos();
         if(isSpaceEmpty(position[0], position[1])){
-            powerUp = game.add.sprite(position[0], position[1], "aquaPU");
+            // powerUp = game.add.sprite(position[0], position[1], "aquaPU");
+            powerUp = game.add.sprite(position[0], position[1], "powerUp");
+            var rainbow = powerUp.animations.add("rainbow");
             appleLayer.add(powerUp);
             powerUpExists = true;
             powerUpSpawnRate = 0;
@@ -240,6 +265,24 @@ function generatePowerUp(){
             powerUpExists = false;
         }
     }
+}
+
+function colidedWithPowerUp(head){
+    if(powerUp){
+        for (var i = 0; i < snake.length; i++) {
+            if(head.x === powerUp.x && head.y === powerUp.y){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function pickUpPowerUp(){
+    powerUp.destroy();
+    powerUpExists = false;
+    powerUpSpawnRate = 0;
+    score += 50;
 }
 
 function generateApple(){
@@ -276,6 +319,13 @@ function colidedWithApple(head){
     return false;
 }
 
+function pickUpApple(){
+    apple.destroy();
+    appleExists = false;
+    appleSpawnRate = 0;
+    score++;
+}
+
 function isSpaceEmpty(x, y){
     for (var i = 0; i < snake.length; i++) {
         if(snake[i].x === x && snake[i].y === y){
@@ -289,13 +339,6 @@ function isSpaceEmpty(x, y){
     return true;
 }
 
-function pickUpApple(){
-    apple.destroy();
-    appleExists = false;
-    appleSpawnRate = 0;
-    score++;
-}
-
 function extendSnake(){
     var lastSegment = snake[0];
     var newSegment;
@@ -307,6 +350,12 @@ function extendSnake(){
     snakeExtendCounter = 0;
 }
 
+function createObstacle(){
+    for (var i = 0; i < snakeReduceAmount; i++) {
+        var obstacle = snake.shift();
+        obstacles.push(obstacle);
+    }
+}
 //returns an array with a valid random X and Y coordinate
 function getRandomPos(){
     var result = [];
