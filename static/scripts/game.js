@@ -116,7 +116,7 @@ var Game = {
         // Increase a counter on every update call.
         frameRate++;
 
-        scoreDisplay.text = score * 10;
+        scoreDisplay.text = score;
 
         if(frameRate % (6 - speed) === 0){
 
@@ -286,7 +286,7 @@ function pickUpPowerUp(){
     powerUp.destroy();
     powerUpExists = false;
     powerUpSpawnRate = 0;
-    score += 50;
+    score += 20;
 }
 
 function generateApple(){

@@ -1,5 +1,5 @@
-var title;
-var play;
+var title,
+    play;
 
 var Menu = {
 
@@ -34,7 +34,7 @@ var Menu = {
             align: "center"
         });
 
-        play = game.add.text(350, 300, "play", {
+        play = game.add.text(350, 350, "play", {
             font: "Ubuntu",
             fontSize: 20,
             fill: "#d7e0ed"
