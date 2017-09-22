@@ -50,6 +50,7 @@ var Game = {
     
     preload: function(){
         game.load.image("snakeBody", "/snakeBody.png");
+        game.load.image("obstacle", "/wall.png");
         game.load.image("apple", "/apple.png");
         game.load.image("aquaPU", "/aquaPU.png");
         game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
@@ -110,7 +111,7 @@ var Game = {
 
         game.world.bringToTop(frontLayer);
         getDirection();
-    
+
         speed = Math.min(4, Math.floor(score/2));
         // Increase a counter on every update call.
         frameRate++;
@@ -118,6 +119,8 @@ var Game = {
         scoreDisplay.text = score * 10;
 
         if(frameRate % (6 - speed) === 0){
+
+
             generateApple();
             appleSpawnRate++;
 
@@ -133,6 +136,7 @@ var Game = {
             if(colidedWithPowerUp(head)){
                 pickUpPowerUp();
                 createObstacle();
+                updateObstacleSprite();
             }
 
             if(colidedWithApple(head)){
@@ -356,6 +360,15 @@ function createObstacle(){
         obstacles.push(obstacle);
     }
 }
+
+function updateObstacleSprite(){
+    if(obstacles.length > 0){
+        for (var i = 0; i < obstacles.length; i++) {
+            obstacles[i].loadTexture("obstacle");
+        }
+    }
+}
+
 //returns an array with a valid random X and Y coordinate
 function getRandomPos(){
     var result = [];
