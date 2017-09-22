@@ -26,19 +26,21 @@ var Menu = {
     create: function(){
 
         game.stage.backgroundColor = "#36393d";
-        title = game.add.text(250, 200, "SnakeJS", {
+        title = game.add.text(game.width / 2 + 0.5, 200 + 0.5, "SnakeJS", {
             font: "Ubuntu",
             fontWeight: "bold",
             fontSize: 60,
             fill: "#d7e0ed",
             align: "center"
         });
+        title.anchor.set(0.5);
 
-        play = game.add.text(350, 350, "play", {
+        play = game.add.text(game.width / 2 + 0.5, 350 + 0.5, "play", {
             font: "Ubuntu",
             fontSize: 20,
             fill: "#d7e0ed"
         });
+        play.anchor.set(0.5);
 
         play.inputEnabled = true;
     },
