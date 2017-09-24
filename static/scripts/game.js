@@ -58,6 +58,8 @@ var Game = {
 
     create: function(){
 
+        canvas = $("canvas").first().css("border", "5px solid rgba(0,0,0,0.1)");
+
         game.stage.backgroundColor = "#36393d";
     
         snake = [];
@@ -87,7 +89,7 @@ var Game = {
         //score display
         scoreDisplay = game.add.text(50, 50, "", {
             font: "60px Ubuntu",
-            fill: "#d7e0ed",
+            fill: "mediumaquamarine",
         });
         scoreDisplay.alpha = 1;
         scoreDisplay.anchor.set(0.5);

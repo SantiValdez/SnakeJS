@@ -6,6 +6,9 @@ var Over = {
     preload: function(){},
 
     create: function(){
+
+        canvas = $("canvas").first().css("border", "none");
+
         gameOver = game.add.text(game.width / 2 + 0.5, 100 + 0.5, "Game Over", {
             font: "Ubuntu",
             fontWeight: "bold",
@@ -25,7 +28,7 @@ var Over = {
         gameOverScore = game.add.text(game.width / 2 + 0.5, 350 + 0.5, score, {
             font: "Ubuntu",
             fontSize: 300,
-            fill: "#d7e0ed"
+            fill: "mediumaquamarine"
         });
         gameOverScore.anchor.set(0.5);
 

@@ -1,5 +1,6 @@
 var title,
-    play;
+    play,
+    canvas;
 
 var Menu = {
 
@@ -24,6 +25,8 @@ var Menu = {
     },
 
     create: function(){
+
+        canvas = $("canvas").first().css("border", "none");
 
         game.stage.backgroundColor = "#36393d";
         title = game.add.text(game.width / 2 + 0.5, 200 + 0.5, "SnakeJS", {

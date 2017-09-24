@@ -1,3 +1,49 @@
-#gameWindow {
-    background-color: lightgray;
+body {
+    background-color: #36393d;
+    color: white;
+}
+#login-form button{
+    border: none;
+    background: none;
+    color: lightgray;
+    margin: 0 auto;
+    font-size: 2em;
+    padding: 0px 20px 0 20px;
+}
+#login-form button:hover{
+    color: white;
+}
+#btn-play{
+    margin: 50px auto;
+    background: none;
+    border: none;
+    font-size: 5em;
+    color : mediumaquamarine;
+    text-decoration: none;
+}
+#btn-play-container{
+    display: flex;
+    justify-content: center;
+}
+#play-anonymously{
+    width: 100%;
+    margin: 150px auto 50px auto;
+}
+#warning-span{
+    color: rgba(160, 160, 160, 0.5);
+}
+.button-container{
+    width: 50%;
+}
+#title-container{
+    margin-bottom: 100px;
+}
+h1{
+    font-size: 10em;
+}
+h3{
+    font-weight: lighter;
+}
+canvas{
+    margin: 40px auto 0px auto;
 }
