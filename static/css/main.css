@@ -1,42 +1,44 @@
 body {
-    background-color: #36393d;
+    background-color: rgb(54, 57, 61);
+    margin: 0;
+    padding: 0;
     color: white;
 }
-#login-form button{
-    border: none;
+hr{
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+}
+input[type="nickname"]{
+    background-color: #B0B0CE;
+}
+input[type="nickname"]:focus{
+    background-color: #B0B0CE;
+}
+.form-btn{
+    border: 1px solid rgba(0, 0, 0, 0.5);
     background: none;
-    color: lightgray;
-    margin: 0 auto;
     font-size: 2em;
-    padding: 0px 20px 0 20px;
+    margin: 20px auto 0 auto;
+    transition: border-radius .5s;
 }
-#login-form button:hover{
-    color: white;
+.form-btn:hover{
+    border: 1px solid rgba(102, 205, 169, 0.5);
+    color: mediumaquamarine;
+    border-radius: 20px;
+    transition: border-radius .5s, color .5s;
 }
-#btn-play{
-    margin: 50px auto;
-    background: none;
-    border: none;
-    font-size: 5em;
-    color : mediumaquamarine;
-    text-decoration: none;
+.add-opacity{
+    opacity: 1 !important;
 }
-#btn-play-container{
-    display: flex;
-    justify-content: center;
+#title-js{
+    color: mediumaquamarine;
 }
-#play-anonymously{
-    width: 100%;
-    margin: 150px auto 50px auto;
-}
-#warning-span{
-    color: rgba(160, 160, 160, 0.5);
-}
-.button-container{
+.form-center{
     width: 50%;
+    margin-left: auto;
+    margin-right: auto;
 }
 #title-container{
-    margin-bottom: 100px;
+    margin-bottom: 60px;
 }
 h1{
     font-size: 10em;

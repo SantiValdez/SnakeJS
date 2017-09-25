@@ -1,10 +1,4 @@
 
-/*
-TODO
--make countdown
-*/
-
-
 //snake vars
 var snake,
     snakeDirection,
@@ -43,8 +37,6 @@ var score,
 //obstacle vars
 var obstacles;
 
-    var called = false;
-
 
 var Game = {
     
@@ -52,13 +44,14 @@ var Game = {
         game.load.image("snakeBody", "/snakeBody.png");
         game.load.image("obstacle", "/wall.png");
         game.load.image("apple", "/apple.png");
-        game.load.image("aquaPU", "/aquaPU.png");
         game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
     },
 
     create: function(){
 
-        canvas = $("canvas").first().css("border", "5px solid rgba(0,0,0,0.1)");
+
+
+        canvas = $("canvas").first().css("border", "2px solid rgba(255,255,255,0.5)");
 
         game.stage.backgroundColor = "#36393d";
     
@@ -110,6 +103,8 @@ var Game = {
     },
 
     update: function(){
+
+        socket.emit('score', score);
 
         game.world.bringToTop(frontLayer);
         getDirection();
@@ -183,7 +178,6 @@ var Game = {
             snake.push(lastSegment);
             firstSegment = lastSegment; 
         }
-
     }
 }   
 
@@ -357,9 +351,9 @@ function extendSnake(){
 }
 
 function createObstacle(){
-    for (var i = 0; i < snakeReduceAmount; i++) {
-        var obstacle = snake.shift();
-        obstacles.push(obstacle);
+    for (var i = snakeReduceAmount; i > 0; i--) {
+        var obstacle = snake.splice(i, 1);
+        obstacles.push(obstacle[0]);
     }
 }
 

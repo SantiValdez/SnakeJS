@@ -1,0 +1,25 @@
+<% include ../partials/header %>
+
+<div class="container">
+
+    <div id="title-container">
+        <h1 class="text-center">Snake<span id="title-js">JS</span></h1>
+        <hr>
+    </div>
+
+    <!-- action: "/"  method: "POST" -->
+    <form action="/" method="POST">
+        <div class="form-group col-md-4 col-offset-4 form-center text-center">
+            <label class="col-form-label" for="nickname">Nickname</label>
+            <input class="form-control" type="nickname" id="nickname" name="nickname" placeholder="Choose a Nickname">
+            <button id="btn-signin" class="form-btn" type="submit">
+                play!
+            </button>
+        </div>
+    </form>
+
+</div>
+
+
+
+<% include ../partials/footer %>

@@ -44,7 +44,7 @@ var Menu = {
             fill: "#d7e0ed"
         });
         play.anchor.set(0.5);
-
+        
         play.inputEnabled = true;
     },
 
