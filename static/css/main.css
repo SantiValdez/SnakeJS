@@ -46,6 +46,12 @@ h1{
 h3{
     font-weight: lighter;
 }
+#player-name-display{
+    position: absolute;
+    top: 200px;
+    margin-left: 50px;
+    float: left;
+}
 canvas{
     margin: 40px auto 0px auto;
 }
