@@ -2,34 +2,43 @@ var express = require("express");
 var Player = require("../models/player");
 var router = express.Router();
 
+
 router.get("/", function(req, res){
     res.render("home");
 });
 
-router.post("/", function(req, res){
-    //create player entry in mongo
-    //redirect to /play
+router.get("/play", function(req, res){
+    res.render("play");
+});
+
+router.post("/play", function(req, res){
     var nickname = req.body.nickname;
     var score = 0;
 
-    var player = new Player({
-        nickname: nickname,
-        hiScore: score,
-        latestScore: score
-    });
-    
-    player.save(function(err, player){
+    Player.findOne({"nickname": nickname}, function(err, foundPlayer){
         if(err){
             console.log(err);
         } else {
-            console.log(player.nickname);
-            res.render("play", {player:player});
+            // if the return value of findOne is null
+            // it means there were no matches
+            if(foundPlayer === null){
+                var player = new Player({
+                    nickname: nickname,
+                    hiScore: score,
+                });
+    
+                player.save(function(err, player){
+                    if(err){
+                        console.log(err);
+                    } else {
+                        res.render("play", {player:player});
+                    }
+                });     
+            } else {
+                res.send("Nickname taken, choose another!");
+            }
         }
     });
-});
-
-router.get("/play", function(req, res){
-    res.render("play");
 });
 
 module.exports = router;

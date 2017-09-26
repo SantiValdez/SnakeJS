@@ -1,10 +1,11 @@
 var express    = require("express"),
     bodyParser = require("body-parser"),
     app        = express(),
-    server = require('http').createServer(app);
+    server     = require('http').createServer(app),
+    io         = require('socket.io').listen(server),
     indexRoute = require("./routes/index.js"),
     mongoose   = require("mongoose"),
-    io = require('socket.io').listen(server);
+    Player     = require("./models/player");
 
 mongoose.connect("mongodb://localhost:27017/snake_js");
 
@@ -19,7 +20,7 @@ io.sockets.on("connection", function(socket){
     console.log("New connection: " + socket.id);
 
     socket.on('score', function(score){
-        console.log(score);
+        Player.findOne({"nickname" :  })
     });
 });
 

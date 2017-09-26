@@ -37,6 +37,8 @@ var score,
 //obstacle vars
 var obstacles;
 
+var playerName;
+
 
 var Game = {
     
@@ -52,6 +54,7 @@ var Game = {
 
 
         canvas = $("canvas").first().css("border", "2px solid rgba(255,255,255,0.5)");
+        playerName = $("#player-name-display").first().text();
 
         game.stage.backgroundColor = "#36393d";
     
@@ -104,7 +107,10 @@ var Game = {
 
     update: function(){
 
-        socket.emit('score', score);
+        socket.emit('score', {
+            score,
+            playerName   
+        });
 
         game.world.bringToTop(frontLayer);
         getDirection();

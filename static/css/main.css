@@ -52,6 +52,12 @@ h3{
     margin-left: 50px;
     float: left;
 }
+#player-score-display{
+    position: absolute;
+    top: 250px;
+    margin-left: 50px;
+    float: left;
+}
 canvas{
     margin: 40px auto 0px auto;
 }
