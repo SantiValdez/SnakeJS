@@ -18,10 +18,6 @@ app.use(indexRoute);
 io.sockets.on("connection", function(socket){
     
     console.log("New connection: " + socket.id);
-
-    socket.on('score', function(score){
-        Player.findOne({"nickname" :  })
-    });
 });
 
 server.listen(27017, function(){
