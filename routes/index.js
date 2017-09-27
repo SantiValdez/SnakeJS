@@ -24,7 +24,7 @@ router.post("/play", function(req, res){
             if(foundPlayer === null){
                 var player = new Player({
                     nickname: nickname,
-                    hiScore: score,
+                    score: score,
                 });
     
                 player.save(function(err, player){
