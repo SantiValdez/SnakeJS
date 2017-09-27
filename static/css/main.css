@@ -4,6 +4,9 @@ body {
     padding: 0;
     color: white;
 }
+button:focus{
+    outline: 0;
+}
 hr{
     border-top: 1px solid rgba(0, 0, 0, 0.3);
 }
@@ -12,6 +15,7 @@ input[type="nickname"]{
 }
 input[type="nickname"]:focus{
     background-color: #B0B0CE;
+    outline-color: rgb(226, 103, 226);
 }
 .form-btn{
     border: 1px solid rgba(0, 0, 0, 0.5);
@@ -48,16 +52,45 @@ h3{
 }
 #player-name-display{
     position: absolute;
-    top: 200px;
-    margin-left: 50px;
+    bottom: 350px;
+    left: 50px;
     float: left;
 }
 #player-score-display{
     position: absolute;
-    top: 250px;
-    margin-left: 50px;
+    bottom: 300px;
+    left: 50px;
     float: left;
 }
 canvas{
     margin: 40px auto 0px auto;
+}
+#leaderboards{
+    width: 500px;
+    border-spacing: 8px 5px;
+    background-color: rgb(255, 255, 255);
+    color: #2C2C2C;
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    float: left;
+    border: 2px solid #53B9E2;
+}
+#leaderboards th,td{
+    border: 1px solid #53B9E2;
+    padding: 10px;
+}
+#leaderboards tr:nth-child(2n){
+    background-color: #F3F3F3;
+}
+#leaderboards td:nth-child(2n){
+    text-align: center;
+    font-weight: bold;
+}
+#leaderboards tr:nth-child(1){
+    background-color: #53B9E2;
+    color: white;
+}
+#leaderboards th{
+    font-weight: lighter;
 }
