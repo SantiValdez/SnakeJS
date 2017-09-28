@@ -47,11 +47,10 @@ var Game = {
         game.load.image("obstacle", "/wall.png");
         game.load.image("apple", "/apple.png");
         game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
+
     },
 
     create: function(){
-
-
 
         canvas = $("canvas").first().css("border", "2px solid rgba(255,255,255,0.5)");
         playerName = $("#player-name-display").first().text();
@@ -110,6 +109,10 @@ var Game = {
         socket.emit('score', {
             score,
             playerName   
+        });
+
+        socket.on("updateScore", function(data){
+            //find cell and change content to new score
         });
 
         game.world.bringToTop(frontLayer);

@@ -41,9 +41,33 @@ io.sockets.on("connection", function(socket){
                             console.log("UPDATED " + data.playerName + "'s score. From " + currentScore + " to " + data.score);
                         }
                     });
+                    //socket emit the score, catch it client side, find the row with the nickname and update the score cell
+                    var newScore = data.score;
+                    var name = data.playerName
+                    socket.emit("updateScore", {name, newScore});
                 }
             }
         });
+    });
+
+    var playerArray;
+    Player.find({}, function(err, players){
+        if(err){
+            console.log(err);
+        } else {
+            playerArray = players;
+
+            var sortedPlayers = playerArray.sort(function(a, b){
+                return a.score - b.score;
+            }).reverse();
+
+            if(sortedPlayers.length > 10){
+                sortedPlayers = playerArray.slice(0, 10);
+                socket.emit("playerList", sortedPlayers);
+            } else {
+                socket.emit("playerList", playerArray);
+            }
+        }
     });
 });
 
