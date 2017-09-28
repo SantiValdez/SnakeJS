@@ -74,10 +74,8 @@ canvas{
     top: 40px;
     left: 20px;
     float: left;
-    border: 2px solid #53B9E2;
 }
 #leaderboards th,td{
-    border: 1px solid #53B9E2;
     padding: 10px;
 }
 #leaderboards tr:nth-child(2n){
@@ -87,10 +85,14 @@ canvas{
     text-align: center;
     font-weight: bold;
 }
-#leaderboards tr:nth-child(1){
-    background-color: #53B9E2;
+thead > tr{
+    background-color: rgb(76, 212, 149);
+
     color: white;
 }
 #leaderboards th{
     font-weight: lighter;
+}
+#leaderboards th:nth-child(2){
+    text-align: center;
 }
