@@ -19,7 +19,6 @@ io.sockets.on("connection", function(socket){
     
     console.log("New connection: " + socket.id);
 
-
     socket.on("score", function(data){
         console.log("Nickname: " + data.playerName + "score: " + data.score);
 
@@ -50,25 +49,52 @@ io.sockets.on("connection", function(socket){
         });
     });
 
-    var playerArray;
-    Player.find({}, function(err, players){
-        if(err){
-            console.log(err);
-        } else {
-            playerArray = players;
+    // setInterval(function(){
+    //     .....
+    // }, 1000);
 
-            var sortedPlayers = playerArray.sort(function(a, b){
-                return a.score - b.score;
-            }).reverse();
-
-            if(sortedPlayers.length > 10){
-                sortedPlayers = playerArray.slice(0, 10);
-                socket.emit("playerList", sortedPlayers);
+    setInterval(function(){
+        var playerArray;
+        Player.find({}, function(err, players){
+            if(err){
+                console.log(err);
             } else {
-                socket.emit("playerList", playerArray);
+                playerArray = players;
+    
+                var sortedPlayers = playerArray.sort(function(a, b){
+                    return a.score - b.score;
+                }).reverse();
+    
+                if(sortedPlayers.length > 10){
+                    sortedPlayers = playerArray.slice(0, 10);
+                    socket.emit("playerList", sortedPlayers);
+                } else {
+                    socket.emit("playerList", playerArray);
+                }
             }
-        }
-    });
+        });
+        
+    }, 1000);
+
+    // var playerArray;
+    // Player.find({}, function(err, players){
+    //     if(err){
+    //         console.log(err);
+    //     } else {
+    //         playerArray = players;
+
+    //         var sortedPlayers = playerArray.sort(function(a, b){
+    //             return a.score - b.score;
+    //         }).reverse();
+
+    //         if(sortedPlayers.length > 10){
+    //             sortedPlayers = playerArray.slice(0, 10);
+    //             socket.emit("playerList", sortedPlayers);
+    //         } else {
+    //             socket.emit("playerList", playerArray);
+    //         }
+    //     }
+    // });
 });
 
 

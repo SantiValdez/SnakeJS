@@ -27,7 +27,7 @@ input[type="nickname"]:focus{
 .form-btn:hover{
     border: 1px solid rgba(102, 205, 169, 0.5);
     color: mediumaquamarine;
-    border-radius: 20px;
+    border-radius: 10px;
     transition: border-radius .5s, color .5s;
 }
 .add-opacity{

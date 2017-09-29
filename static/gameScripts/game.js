@@ -37,7 +37,27 @@ var score,
 //obstacle vars
 var obstacles;
 
+//player vars
 var playerName;
+
+
+var socket = io.connect("http://localhost:27017/");
+var tbody = $("#leaderboards > tbody");
+var tableExists = false;
+
+setInterval(function(){
+    socket.on("playerList", function(data){    
+            tbody.children().remove();
+        
+            var topScorers = data;
+        
+            for (var i = 0; i < topScorers.length; i++) {
+                tbody.append("<tr><td>" + topScorers[i].nickname + "</td><td>" + topScorers[i].score + "</td></tr>");
+            }
+        });
+}, 1000);
+
+
 
 
 var Game = {
@@ -52,6 +72,7 @@ var Game = {
 
     create: function(){
 
+        
         canvas = $("canvas").first().css("border", "2px solid rgba(255,255,255,0.5)");
         playerName = $("#player-name-display").first().text();
 
@@ -102,6 +123,7 @@ var Game = {
         up = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         down = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+
     },
 
     update: function(){
@@ -109,10 +131,6 @@ var Game = {
         socket.emit('score', {
             score,
             playerName   
-        });
-
-        socket.on("updateScore", function(data){
-            //find cell and change content to new score
         });
 
         game.world.bringToTop(frontLayer);
@@ -125,7 +143,6 @@ var Game = {
         scoreDisplay.text = score;
 
         if(frameRate % (6 - speed) === 0){
-
 
             generateApple();
             appleSpawnRate++;
