@@ -43,19 +43,16 @@ var playerName;
 
 var socket = io.connect("http://localhost:27017/");
 var tbody = $("#leaderboards > tbody");
-var tableExists = false;
 
-setInterval(function(){
-    socket.on("playerList", function(data){    
-            tbody.children().remove();
-        
-            var topScorers = data;
-        
-            for (var i = 0; i < topScorers.length; i++) {
-                tbody.append("<tr><td>" + topScorers[i].nickname + "</td><td>" + topScorers[i].score + "</td></tr>");
-            }
-        });
-}, 1000);
+socket.on("playerList", function(data){    
+        tbody.children().remove();
+    
+        var topScorers = data;
+    
+        for (var i = 0; i < topScorers.length; i++) {
+            tbody.append("<tr><td>" + topScorers[i].nickname + "</td><td>" + topScorers[i].score + "</td></tr>");
+        }
+    });
 
 
 
@@ -63,6 +60,11 @@ setInterval(function(){
 var Game = {
     
     preload: function(){
+        game.load.image("snakeHeadLeft", "/snake/snakeHeadLeft.png");
+        game.load.image("snakeHeadRight", "/snake/snakeHeadRight.png");
+        game.load.image("snakeHeadUp", "/snake/snakeHeadUp.png");
+        game.load.image("snakeHeadDown", "/snake/snakeHeadDown.png");
+        ////////////////////////////////////////////////
         game.load.image("snakeBody", "/snakeBody.png");
         game.load.image("obstacle", "/wall.png");
         game.load.image("apple", "/apple.png");
@@ -105,7 +107,7 @@ var Game = {
         //score display
         scoreDisplay = game.add.text(50, 50, "", {
             font: "60px Ubuntu",
-            fill: "mediumaquamarine",
+            fill: "white",
         });
         scoreDisplay.alpha = 1;
         scoreDisplay.anchor.set(0.5);
@@ -184,21 +186,29 @@ var Game = {
             if(snakeDirection === "left"){
                 lastSegment.x = firstSegmentX - segmentSize;
                 lastSegment.y = firstSegmentY;
+                lastSegment.loadTexture("snakeHeadLeft");
+                firstSegment.loadTexture("snakeBody");
             }
     
             if(snakeDirection === "right"){
                 lastSegment.x = firstSegmentX + segmentSize;
                 lastSegment.y = firstSegmentY;
+                lastSegment.loadTexture("snakeHeadRight");
+                firstSegment.loadTexture("snakeBody");
             }
     
             if(snakeDirection === "up"){
                 lastSegment.x = firstSegmentX;
                 lastSegment.y = firstSegmentY - segmentSize;
+                lastSegment.loadTexture("snakeHeadUp");
+                firstSegment.loadTexture("snakeBody");
             }
     
             if(snakeDirection === "down"){
                 lastSegment.x = firstSegmentX;
                 lastSegment.y = firstSegmentY + segmentSize;
+                lastSegment.loadTexture("snakeHeadDown");
+                firstSegment.loadTexture("snakeBody");
             }
     
             snake.push(lastSegment);

@@ -49,9 +49,6 @@ io.sockets.on("connection", function(socket){
         });
     });
 
-    // setInterval(function(){
-    //     .....
-    // }, 1000);
 
     setInterval(function(){
         var playerArray;
@@ -65,8 +62,8 @@ io.sockets.on("connection", function(socket){
                     return a.score - b.score;
                 }).reverse();
     
-                if(sortedPlayers.length > 10){
-                    sortedPlayers = playerArray.slice(0, 10);
+                if(sortedPlayers.length > 15){
+                    sortedPlayers = playerArray.slice(0, 15);
                     socket.emit("playerList", sortedPlayers);
                 } else {
                     socket.emit("playerList", playerArray);
@@ -75,26 +72,6 @@ io.sockets.on("connection", function(socket){
         });
         
     }, 1000);
-
-    // var playerArray;
-    // Player.find({}, function(err, players){
-    //     if(err){
-    //         console.log(err);
-    //     } else {
-    //         playerArray = players;
-
-    //         var sortedPlayers = playerArray.sort(function(a, b){
-    //             return a.score - b.score;
-    //         }).reverse();
-
-    //         if(sortedPlayers.length > 10){
-    //             sortedPlayers = playerArray.slice(0, 10);
-    //             socket.emit("playerList", sortedPlayers);
-    //         } else {
-    //             socket.emit("playerList", playerArray);
-    //         }
-    //     }
-    // });
 });
 
 
