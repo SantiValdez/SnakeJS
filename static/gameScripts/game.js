@@ -68,7 +68,8 @@ var Game = {
         game.load.image("snakeBody", "/snakeBody.png");
         game.load.image("obstacle", "/wall.png");
         game.load.image("apple", "/apple.png");
-        game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
+        // game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
+        game.load.atlasJSONHash( "powerUp" , "/powerUp.png", "/powerUp.json" );
 
     },
 
@@ -77,6 +78,8 @@ var Game = {
         
         canvas = $("canvas").first().css("border", "2px solid rgba(255,255,255,0.5)");
         playerName = $("#player-name-display").first().text();
+
+
 
         game.stage.backgroundColor = "#36393d";
     
@@ -153,7 +156,7 @@ var Game = {
             powerUpSpawnRate++;
 
             if(powerUpExists){
-                powerUp.animations.play("rainbow", 5, true);
+                powerUp.animations.play("rainbow", 10, true);
             }
             
             checkCollision(snake);
@@ -286,11 +289,10 @@ function checkCollision(snake){
 
 function generatePowerUp(){
 
-    if(snake.length >= 18 && !powerUpExists && powerUpSpawnRate > 50){
+    if(snake.length >= 10 && !powerUpExists && powerUpSpawnRate > 50){
 
         var position = getRandomPos();
         if(isSpaceEmpty(position[0], position[1])){
-            // powerUp = game.add.sprite(position[0], position[1], "aquaPU");
             powerUp = game.add.sprite(position[0], position[1], "powerUp");
             var rainbow = powerUp.animations.add("rainbow");
             appleLayer.add(powerUp);

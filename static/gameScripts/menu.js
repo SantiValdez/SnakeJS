@@ -29,27 +29,20 @@ var Menu = {
         canvas = $("canvas").first().css("border", "none");
 
         game.stage.backgroundColor = "#36393d";
-        title = game.add.text(game.width / 2 + 0.5, 200 + 0.5, "SnakeJS", {
+        start = game.add.text(game.width / 2 + 0.5, 300 + 0.5, "ssstart!", {
             font: "Ubuntu",
             fontWeight: "bold",
-            fontSize: 60,
+            fontSize: 100,
             fill: "#d7e0ed",
             align: "center"
         });
-        title.anchor.set(0.5);
-
-        play = game.add.text(game.width / 2 + 0.5, 350 + 0.5, "play", {
-            font: "Ubuntu",
-            fontSize: 20,
-            fill: "#d7e0ed"
-        });
-        play.anchor.set(0.5);
+        start.anchor.set(0.5);
         
-        play.inputEnabled = true;
+        start.inputEnabled = true;
     },
 
     update: function(){
-        play.events.onInputDown.add(startGame, this);
+        start.events.onInputDown.add(startGame, this);
     }
 }
 
