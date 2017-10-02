@@ -11,6 +11,11 @@ var apple,
     appleSpawnRate,
     appleSpawnRate;
 
+//lock vars
+var lock, 
+    lockExists;
+
+
 //powerUp vars
 var powerUp,
     powerUpExists,
@@ -64,11 +69,14 @@ var Game = {
         game.load.image("snakeHeadRight", "/snake/snakeHeadRight.png");
         game.load.image("snakeHeadUp", "/snake/snakeHeadUp.png");
         game.load.image("snakeHeadDown", "/snake/snakeHeadDown.png");
-        ////////////////////////////////////////////////
         game.load.image("snakeBody", "/snakeBody.png");
+
         game.load.image("obstacle", "/wall.png");
+
+        game.load.image("lock", "/lock.png");
+
         game.load.image("apple", "/apple.png");
-        // game.load.spritesheet('powerUp', "/powerUp.png", 20, 20);
+
         game.load.atlasJSONHash( "powerUp" , "/powerUp.png", "/powerUp.json" );
 
     },
@@ -155,6 +163,8 @@ var Game = {
             generatePowerUp();
             powerUpSpawnRate++;
 
+            generateLock();
+
             if(powerUpExists){
                 powerUp.animations.play("rainbow", 10, true);
             }
@@ -170,6 +180,11 @@ var Game = {
             if(colidedWithApple(head)){
                 pickUpApple();
                 extendSnake();
+            }
+            
+            if(colidedWithLock(head)){
+                pickUpLock();
+                deadlyWallsMode();
             }
             
             //if wrap mode is chosen wrap the snake, otherwise make walls deadly
@@ -274,14 +289,14 @@ function checkCollision(snake){
     for (var i = 0; i < snake.length - 1; i++) {
         //if snake[i] x and y same as rest of snake body, then load game over
         if(head.x === snake[i].x && head.y === snake[i].y){
-            game.state.start("Over");
+            game.state.start("Over", Phaser.Plugin.StateTransition.Out.SlideLeft, Phaser.Plugin.StateTransition.In.SlideLeft);
         }
     }
 
     if(obstacles.length > 0){
         for (var i = 0; i < obstacles.length; i++) {
             if(head.x === obstacles[i].x && head.y === obstacles[i].y){
-                game.state.start("Over");
+                game.state.start("Over", Phaser.Plugin.StateTransition.Out.SlideLeft, Phaser.Plugin.StateTransition.In.SlideLeft);
             }
         }
     }
@@ -362,6 +377,46 @@ function pickUpApple(){
     appleExists = false;
     appleSpawnRate = 0;
     score++;
+}
+
+function generateLock(){
+    if(!lockExists){
+        var position = getRandomPos();
+        
+        lockX = position[0];
+        lockY = position[1];
+
+        if(isSpaceEmpty(lockX, lockY)){
+            lock = game.add.sprite(lockX, lockY, "lock");
+            appleLayer.add(lock);
+            lockExists = true;
+        } else {
+            console.log("Skipping lock generation for now!");
+            lockExists = false;
+        }  
+    }
+}
+
+function colidedWithLock(head){
+    if(lock){
+        for (var i = 0; i < snake.length; i++) {
+            if(head.x === lock.x && head.y === lock.y){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function pickUpLock(){
+    lock.destroy();
+    lockExists = false;
+    score++;
+}
+
+function deadlyWallsMode(){
+    wrapMode = false;
+    $("canvas").first().css("border", "5px solid #ff0000");
 }
 
 function isSpaceEmpty(x, y){

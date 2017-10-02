@@ -43,5 +43,5 @@ var Over = {
 }
 
 function reloadGame(){
-    game.state.start("Game");
+    game.state.start("Game", Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 }

@@ -47,5 +47,5 @@ var Menu = {
 }
 
 function startGame(){
-    game.state.start("Game");
+    game.state.start("Game", Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 }
