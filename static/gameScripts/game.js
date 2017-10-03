@@ -8,12 +8,13 @@ var snake,
 //apple vars
 var apple,
     appleExists,
-    appleSpawnRate,
     appleSpawnRate;
 
 //lock vars
 var lock, 
-    lockExists;
+    lockExists,
+    lockSpawnRate,
+    lockDuration;
 
 
 //powerUp vars
@@ -37,13 +38,15 @@ var score,
     gameHeight,
     appleLayer,         //layers so that snake body goes over the apples
     snakeLayer,
-    frontLayer;
+    frontLayer,
+    canWrap = true;
 
 //obstacle vars
 var obstacles;
 
 //player vars
 var playerName;
+
 
 
 var socket = io.connect("http://localhost:27017/");
@@ -87,7 +90,7 @@ var Game = {
         canvas = $("canvas").first().css("border", "2px solid rgba(255,255,255,0.5)");
         playerName = $("#player-name-display").first().text();
 
-
+        canWrap = true;
 
         game.stage.backgroundColor = "#36393d";
     
@@ -103,6 +106,10 @@ var Game = {
         powerUpExists = false;
         powerUpSpawnRate = 0;
         snakeReduceAmount = 3;  // amount to reduce length of snake when powerup picke up
+
+        lockExists = false;
+        lockSpawnRate = 0;
+        lockDuration = 100;
 
         obstacles = [];
 
@@ -164,6 +171,8 @@ var Game = {
             powerUpSpawnRate++;
 
             generateLock();
+            lockSpawnRate++;
+            lockDuration--;
 
             if(powerUpExists){
                 powerUp.animations.play("rainbow", 10, true);
@@ -184,11 +193,14 @@ var Game = {
             
             if(colidedWithLock(head)){
                 pickUpLock();
-                deadlyWallsMode();
+                deadlyWalls();
+            }
+            if(lockDuration === 0){
+                safeWalls();
             }
             
             //if wrap mode is chosen wrap the snake, otherwise make walls deadly
-            if(wrapMode){
+            if(canWrap){
                 wrapSnake();
             } else {
                 containSnake();
@@ -304,7 +316,7 @@ function checkCollision(snake){
 
 function generatePowerUp(){
 
-    if(snake.length >= 10 && !powerUpExists && powerUpSpawnRate > 50){
+    if(snake.length >= 18 && !powerUpExists && powerUpSpawnRate > 50){
 
         var position = getRandomPos();
         if(isSpaceEmpty(position[0], position[1])){
@@ -335,7 +347,7 @@ function pickUpPowerUp(){
     powerUp.destroy();
     powerUpExists = false;
     powerUpSpawnRate = 0;
-    score += 20;
+    score += 5;
 }
 
 function generateApple(){
@@ -380,7 +392,10 @@ function pickUpApple(){
 }
 
 function generateLock(){
-    if(!lockExists){
+    if(!lockExists && snake.length >= 18 && lockSpawnRate > 100){
+
+        lockSpawnRate = 0;
+
         var position = getRandomPos();
         
         lockX = position[0];
@@ -411,12 +426,18 @@ function colidedWithLock(head){
 function pickUpLock(){
     lock.destroy();
     lockExists = false;
-    score++;
+    score += 10;
 }
 
-function deadlyWallsMode(){
-    wrapMode = false;
-    $("canvas").first().css("border", "5px solid #ff0000");
+function deadlyWalls(){
+    lockDuration = 100;
+    canWrap = false;
+    canvas.css("border", "2px solid #ff0000");
+}
+
+function safeWalls(){
+    canWrap = true;
+    canvas.css("border", "2px solid rgba(255, 255, 255, 0.5)");
 }
 
 function isSpaceEmpty(x, y){
