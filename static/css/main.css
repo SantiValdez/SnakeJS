@@ -62,7 +62,7 @@ h3{
 }
 canvas{
     margin: 40px auto 0px auto;
-    transition: border 1s;
+    transition: border 1s, background-color 2s;
 }
 #leaderboards{
     width: 500px;

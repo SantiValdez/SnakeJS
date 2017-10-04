@@ -1,0 +1,28 @@
+{"frames": [
+
+{
+	"filename": "untitled (1).png",
+	"frame": {"x":0,"y":0,"w":20,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":20},
+	"sourceSize": {"w":20,"h":20}
+},
+{
+	"filename": "untitled (2).png",
+	"frame": {"x":20,"y":0,"w":20,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":20},
+	"sourceSize": {"w":20,"h":20}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "checkpoint.png",
+	"format": "RGBA8888",
+	"size": {"w":40,"h":20},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e03067e1487f08e9c4bdc30e290e8ed5:a8e9c90ba7dec1dd74b3c56b677e4236:d7381a9c3c03e1c7216a04a9e729d111$"
+}
+}

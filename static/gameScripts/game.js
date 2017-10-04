@@ -23,6 +23,15 @@ var powerUp,
     powerUpSpawnRate,
     snakeReduceAmount;
 
+//extension vars
+var extension,
+    extensionExists,
+    extensionSpawnRate;
+
+//checkpoint vars
+var checkpoint,
+    checkpointExists;
+
 //controls vars
 var left,
     right,
@@ -68,19 +77,24 @@ socket.on("playerList", function(data){
 var Game = {
     
     preload: function(){
+        //snake
         game.load.image("snakeHeadLeft", "/snake/snakeHeadLeft.png");
         game.load.image("snakeHeadRight", "/snake/snakeHeadRight.png");
         game.load.image("snakeHeadUp", "/snake/snakeHeadUp.png");
         game.load.image("snakeHeadDown", "/snake/snakeHeadDown.png");
-        game.load.image("snakeBody", "/snakeBody.png");
-
-        game.load.image("obstacle", "/wall.png");
-
-        game.load.image("lock", "/lock.png");
-
-        game.load.image("apple", "/apple.png");
-
-        game.load.atlasJSONHash( "powerUp" , "/powerUp.png", "/powerUp.json" );
+        game.load.image("snakeBody", "/snake/snakeBody.png");
+        //walls
+        game.load.image("obstacle", "/wall/wall.png");
+        //locks
+        game.load.image("lock", "/lock/lock.png");
+        //apples
+        game.load.image("apple", "/apple/apple.png");
+        //powerup
+        game.load.atlasJSONHash( "powerUp" , "/powerup/powerUp.png", "/powerup/powerUp.json" );
+        //extensions
+        game.load.atlasJSONHash( "extension" , "/extension/extension.png", "/extension/extension.json" );
+        //checkpoint
+        game.load.atlasJSONHash( "checkpoint" , "/checkpoint/checkpoint.png", "/checkpoint/checkpoint.json" );
 
     },
 
@@ -100,16 +114,20 @@ var Game = {
         newDirection = null;
 
         appleExists = false;
-        appleSpawnRate = 5;
         appleSpawnRate = 0;
+        
+        extensionExists = false;
+        extensionSpawnRate = 0;
 
         powerUpExists = false;
         powerUpSpawnRate = 0;
-        snakeReduceAmount = 3;  // amount to reduce length of snake when powerup picke up
+        snakeReduceAmount = 3;  // amount to reduce length of snake when powerup picked up
 
         lockExists = false;
         lockSpawnRate = 0;
         lockDuration = 100;
+
+        checkpointExists = false;
 
         obstacles = [];
 
@@ -174,6 +192,11 @@ var Game = {
             lockSpawnRate++;
             lockDuration--;
 
+            generateExtension();
+            extensionSpawnRate++;
+
+            generateCheckpoint();
+
             if(powerUpExists){
                 powerUp.animations.play("rainbow", 10, true);
             }
@@ -184,6 +207,24 @@ var Game = {
                 pickUpPowerUp();
                 createObstacle();
                 updateObstacleSprite();
+            }
+
+            if(extensionExists){
+                extension.animations.play("colorSwitch", 10, true);
+            }
+
+            if(colidedWithExtension(head)){
+                pickUpExtension();
+                extendSnake(5);
+            }
+
+            if(checkpointExists){
+                checkpoint.animations.play("colorSwitch", 15, true);
+            }
+
+            if(colidedWithcheckpoint(head)){
+                pickUpcheckpoint();
+                clearObstacles();
             }
 
             if(colidedWithApple(head)){
@@ -316,7 +357,7 @@ function checkCollision(snake){
 
 function generatePowerUp(){
 
-    if(snake.length >= 18 && !powerUpExists && powerUpSpawnRate > 50){
+    if(!powerUpExists && powerUpSpawnRate > 150){
 
         var position = getRandomPos();
         if(isSpaceEmpty(position[0], position[1])){
@@ -392,7 +433,7 @@ function pickUpApple(){
 }
 
 function generateLock(){
-    if(!lockExists && snake.length >= 18 && lockSpawnRate > 100){
+    if(!lockExists && lockSpawnRate > 500){
 
         lockSpawnRate = 0;
 
@@ -429,6 +470,82 @@ function pickUpLock(){
     score += 10;
 }
 
+function generateExtension(){
+    if(!extensionExists && extensionSpawnRate > 1000 && snake.length < 30){
+
+        extensionSpawnRate = 0;
+
+        var position = getRandomPos();
+        
+        extensionX = position[0];
+        extensionY = position[1];
+
+        if(isSpaceEmpty(extensionX, extensionY)){
+            extension = game.add.sprite(extensionX, extensionY, "extension");
+            var colorSwitch = extension.animations.add("colorSwitch");
+            appleLayer.add(extension);
+            extensionExists = true;
+        } else {
+            console.log("Skipping extension generation for now!");
+            extensionExists = false;
+        }  
+    }
+}
+
+function colidedWithExtension(head){
+    if(extension){
+        for (var i = 0; i < snake.length; i++) {
+            if(head.x === extension.x && head.y === extension.y){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function pickUpExtension(){
+    extension.destroy();
+    extensionExists = false;
+    score += 15;
+}
+
+function generateCheckpoint(){
+    if(!checkpointExists && snake.length >= 10){
+
+        var position = getRandomPos();
+        
+        checkpointX = position[0];
+        checkpointY = position[1];
+
+        if(isSpaceEmpty(checkpointX, checkpointY)){
+            checkpoint = game.add.sprite(checkpointX, checkpointY, "checkpoint");
+            var colorSwitch = checkpoint.animations.add("colorSwitch");
+            appleLayer.add(checkpoint);
+            checkpointExists = true;
+        } else {
+            console.log("Skipping checkpoint generation for now!");
+            checkpointExists = false;
+        }  
+    }
+}
+
+function colidedWithcheckpoint(head){
+    if(checkpoint){
+        for (var i = 0; i < snake.length; i++) {
+            if(head.x === checkpoint.x && head.y === checkpoint.y){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function pickUpcheckpoint(){
+    checkpoint.destroy();
+    checkpointExists = false;
+    score += 25;
+}
+
 function deadlyWalls(){
     lockDuration = 100;
     canWrap = false;
@@ -453,15 +570,26 @@ function isSpaceEmpty(x, y){
     return true;
 }
 
-function extendSnake(){
+function extendSnake(amount){
+
     var lastSegment = snake[0];
     var newSegment;
 
-    newSegment = game.add.sprite(lastSegment.x - segmentSize, lastSegment.y - segmentSize, "snakeBody");
-    console.log("added segment!");
-    snake.unshift(newSegment);
-    snakeLayer.add(newSegment);
-    snakeExtendCounter = 0;
+    if(!amount || amount <= 0){
+        newSegment = game.add.sprite(lastSegment.x - segmentSize, lastSegment.y - segmentSize, "snakeBody");
+        console.log("added segment!");
+        snake.unshift(newSegment);
+        snakeLayer.add(newSegment);
+    } else {
+        for (var i = 0; i < amount; i++) {
+            newSegment = game.add.sprite(lastSegment.x - segmentSize, lastSegment.y - segmentSize, "snakeBody");
+            console.log("added segment!");
+            snake.unshift(newSegment);
+            snakeLayer.add(newSegment);
+            lastSegment = snake[0];
+            newSegment = null;    
+        }
+    }
 }
 
 function createObstacle(){
@@ -477,6 +605,14 @@ function updateObstacleSprite(){
             obstacles[i].loadTexture("obstacle");
         }
     }
+}
+
+function clearObstacles(){
+    for (var i = 0; i < obstacles.length; i++) {
+        obstacles[i].destroy();
+    }
+    obstacles = [];
+    game.camera.flash(0xf48bdc, 500);
 }
 
 //returns an array with a valid random X and Y coordinate
