@@ -152,6 +152,7 @@ var Game = {
         //generating snake, increasing X each iteration
         for(var i = 0; i < 10; i++){
             snake[i] = game.add.sprite(300 + i * segmentSize, 20 * segmentSize, "snakeBody" );
+            snake[i].animations.add("pickupAnim");
             snakeLayer.add(snake[i]);
         }
     
@@ -182,6 +183,44 @@ var Game = {
 
         if(frameRate % (6 - speed) === 0){
 
+            var firstSegment = snake[snake.length - 1];
+            var lastSegment = snake.shift();
+            var firstSegmentX = firstSegment.x;
+            var firstSegmentY = firstSegment.y;
+        
+            checkNewDirection();
+    
+            if(snakeDirection === "left"){
+                lastSegment.x = firstSegmentX - segmentSize;
+                lastSegment.y = firstSegmentY;
+                lastSegment.loadTexture("snakeHeadLeft");
+                firstSegment.loadTexture("snakeBody");
+            }
+    
+            if(snakeDirection === "right"){
+                lastSegment.x = firstSegmentX + segmentSize;
+                lastSegment.y = firstSegmentY;
+                lastSegment.loadTexture("snakeHeadRight");
+                firstSegment.loadTexture("snakeBody");
+            }
+    
+            if(snakeDirection === "up"){
+                lastSegment.x = firstSegmentX;
+                lastSegment.y = firstSegmentY - segmentSize;
+                lastSegment.loadTexture("snakeHeadUp");
+                firstSegment.loadTexture("snakeBody");
+            }
+    
+            if(snakeDirection === "down"){
+                lastSegment.x = firstSegmentX;
+                lastSegment.y = firstSegmentY + segmentSize;
+                lastSegment.loadTexture("snakeHeadDown");
+                firstSegment.loadTexture("snakeBody");
+            }
+    
+            snake.push(lastSegment);
+            firstSegment = lastSegment; 
+
             generateApple();
             appleSpawnRate++;
 
@@ -189,7 +228,7 @@ var Game = {
             powerUpSpawnRate++;
 
             generateLock();
-            lockSpawnRate++;
+            if(!lockExists){ lockSpawnRate++; }
             lockDuration--;
 
             generateExtension();
@@ -247,43 +286,43 @@ var Game = {
                 containSnake();
             }
 
-            var firstSegment = snake[snake.length - 1];
-            var lastSegment = snake.shift();
-            var firstSegmentX = firstSegment.x;
-            var firstSegmentY = firstSegment.y;
+            // var firstSegment = snake[snake.length - 1];
+            // var lastSegment = snake.shift();
+            // var firstSegmentX = firstSegment.x;
+            // var firstSegmentY = firstSegment.y;
         
-            checkNewDirection();
+            // checkNewDirection();
     
-            if(snakeDirection === "left"){
-                lastSegment.x = firstSegmentX - segmentSize;
-                lastSegment.y = firstSegmentY;
-                lastSegment.loadTexture("snakeHeadLeft");
-                firstSegment.loadTexture("snakeBody");
-            }
+            // if(snakeDirection === "left"){
+            //     lastSegment.x = firstSegmentX - segmentSize;
+            //     lastSegment.y = firstSegmentY;
+            //     lastSegment.loadTexture("snakeHeadLeft");
+            //     firstSegment.loadTexture("snakeBody");
+            // }
     
-            if(snakeDirection === "right"){
-                lastSegment.x = firstSegmentX + segmentSize;
-                lastSegment.y = firstSegmentY;
-                lastSegment.loadTexture("snakeHeadRight");
-                firstSegment.loadTexture("snakeBody");
-            }
+            // if(snakeDirection === "right"){
+            //     lastSegment.x = firstSegmentX + segmentSize;
+            //     lastSegment.y = firstSegmentY;
+            //     lastSegment.loadTexture("snakeHeadRight");
+            //     firstSegment.loadTexture("snakeBody");
+            // }
     
-            if(snakeDirection === "up"){
-                lastSegment.x = firstSegmentX;
-                lastSegment.y = firstSegmentY - segmentSize;
-                lastSegment.loadTexture("snakeHeadUp");
-                firstSegment.loadTexture("snakeBody");
-            }
+            // if(snakeDirection === "up"){
+            //     lastSegment.x = firstSegmentX;
+            //     lastSegment.y = firstSegmentY - segmentSize;
+            //     lastSegment.loadTexture("snakeHeadUp");
+            //     firstSegment.loadTexture("snakeBody");
+            // }
     
-            if(snakeDirection === "down"){
-                lastSegment.x = firstSegmentX;
-                lastSegment.y = firstSegmentY + segmentSize;
-                lastSegment.loadTexture("snakeHeadDown");
-                firstSegment.loadTexture("snakeBody");
-            }
+            // if(snakeDirection === "down"){
+            //     lastSegment.x = firstSegmentX;
+            //     lastSegment.y = firstSegmentY + segmentSize;
+            //     lastSegment.loadTexture("snakeHeadDown");
+            //     firstSegment.loadTexture("snakeBody");
+            // }
     
-            snake.push(lastSegment);
-            firstSegment = lastSegment; 
+            // snake.push(lastSegment);
+            // firstSegment = lastSegment; 
         }
     }
 }   
@@ -362,7 +401,7 @@ function generatePowerUp(){
         var position = getRandomPos();
         if(isSpaceEmpty(position[0], position[1])){
             powerUp = game.add.sprite(position[0], position[1], "powerUp");
-            var rainbow = powerUp.animations.add("rainbow");
+            powerUp.animations.add("rainbow");
             appleLayer.add(powerUp);
             powerUpExists = true;
             powerUpSpawnRate = 0;
@@ -433,7 +472,7 @@ function pickUpApple(){
 }
 
 function generateLock(){
-    if(!lockExists && lockSpawnRate > 500){
+    if(!lockExists && lockSpawnRate > 400){
 
         lockSpawnRate = 0;
 
@@ -482,7 +521,7 @@ function generateExtension(){
 
         if(isSpaceEmpty(extensionX, extensionY)){
             extension = game.add.sprite(extensionX, extensionY, "extension");
-            var colorSwitch = extension.animations.add("colorSwitch");
+            colorSwitch = extension.animations.add("colorSwitch");
             appleLayer.add(extension);
             extensionExists = true;
         } else {
@@ -510,7 +549,7 @@ function pickUpExtension(){
 }
 
 function generateCheckpoint(){
-    if(!checkpointExists && snake.length >= 10){
+    if(!checkpointExists && obstacles.length >= 20){
 
         var position = getRandomPos();
         
@@ -519,7 +558,7 @@ function generateCheckpoint(){
 
         if(isSpaceEmpty(checkpointX, checkpointY)){
             checkpoint = game.add.sprite(checkpointX, checkpointY, "checkpoint");
-            var colorSwitch = checkpoint.animations.add("colorSwitch");
+            colorSwitch = checkpoint.animations.add("colorSwitch");
             appleLayer.add(checkpoint);
             checkpointExists = true;
         } else {
@@ -543,7 +582,7 @@ function colidedWithcheckpoint(head){
 function pickUpcheckpoint(){
     checkpoint.destroy();
     checkpointExists = false;
-    score += 25;
+    score += obstacles.length;
 }
 
 function deadlyWalls(){
@@ -576,13 +615,13 @@ function extendSnake(amount){
     var newSegment;
 
     if(!amount || amount <= 0){
-        newSegment = game.add.sprite(lastSegment.x - segmentSize, lastSegment.y - segmentSize, "snakeBody");
+        newSegment = game.add.sprite(lastSegment.x, lastSegment.y, "snakeBody");
         console.log("added segment!");
         snake.unshift(newSegment);
         snakeLayer.add(newSegment);
     } else {
         for (var i = 0; i < amount; i++) {
-            newSegment = game.add.sprite(lastSegment.x - segmentSize, lastSegment.y - segmentSize, "snakeBody");
+            newSegment = game.add.sprite(lastSegment.x, lastSegment.y, "snakeBody");
             console.log("added segment!");
             snake.unshift(newSegment);
             snakeLayer.add(newSegment);
