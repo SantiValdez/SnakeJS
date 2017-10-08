@@ -72,9 +72,10 @@ socket.on("playerList", function(data){
     });
 
 
-
+var emitter;
 
 var Game = {
+
     
     preload: function(){
         //snake
@@ -90,13 +91,14 @@ var Game = {
         game.load.image("lock", "/lock/lock.png");
         //apples
         game.load.image("apple", "/apple/apple.png");
+        game.load.image("appleParticle", "/apple/appleParticles/particle.png");
         //powerup
         game.load.atlasJSONHash( "powerUp" , "/powerup/powerUp.png", "/powerup/powerUp.json" );
         //extensions
         game.load.atlasJSONHash( "extension" , "/extension/extension.png", "/extension/extension.json" );
         //checkpoint
         game.load.atlasJSONHash( "checkpoint" , "/checkpoint/checkpoint.png", "/checkpoint/checkpoint.json" );
-
+        // game.load.atlasJSONHash( "checkpointSpawn" , "/checkpoint/checkpointSpawn.png", "/checkpoint/checkpointSpawn.json" );      
     },
 
     create: function(){
@@ -155,6 +157,7 @@ var Game = {
             snake[i].animations.add("pickupAnim");
             snakeLayer.add(snake[i]);
         }
+
     
         //setting up controls to check if key was JUST pressed
         left = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
@@ -166,6 +169,7 @@ var Game = {
     },
 
     update: function(){
+        
 
         socket.emit('score', {
             score,
@@ -370,6 +374,8 @@ function generatePowerUp(){
         if(isSpaceEmpty(position[0], position[1])){
             powerUp = game.add.sprite(position[0], position[1], "powerUp");
             powerUp.animations.add("rainbow");
+            powerUp.scale.setTo(0.1,0.1);
+            game.add.tween(powerUp.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
             appleLayer.add(powerUp);
             powerUpExists = true;
             powerUpSpawnRate = 0;
@@ -411,9 +417,15 @@ function generateApple(){
 
         if(isSpaceEmpty(appleX, appleY)){
             apple = game.add.sprite(appleX, appleY, "apple");
+            apple.scale.setTo(0.1,0.1);
+            game.add.tween(apple.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
             appleLayer.add(apple);
             appleSpawnRate = 0;
             appleExists = true;
+
+            
+            emitter = game.add.emitter(apple.x, apple.y);
+            emitter.makeParticles("appleParticle");
         } else {
             console.log("Skipping apple generation for now!");
             appleExists = false;
@@ -437,6 +449,7 @@ function pickUpApple(){
     appleExists = false;
     appleSpawnRate = 0;
     score++;
+    emitter.start(true, 300, null, 6);
 }
 
 function generateLock(){
@@ -451,6 +464,8 @@ function generateLock(){
 
         if(isSpaceEmpty(lockX, lockY)){
             lock = game.add.sprite(lockX, lockY, "lock");
+            lock.scale.setTo(0.1,0.1);
+            game.add.tween(lock.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
             appleLayer.add(lock);
             lockExists = true;
         } else {
@@ -517,7 +532,7 @@ function pickUpExtension(){
 }
 
 function generateCheckpoint(){
-    if(!checkpointExists && obstacles.length >= 20){
+    if(!checkpointExists && obstacles.length >= 0){
 
         var position = getRandomPos();
         
@@ -526,7 +541,9 @@ function generateCheckpoint(){
 
         if(isSpaceEmpty(checkpointX, checkpointY)){
             checkpoint = game.add.sprite(checkpointX, checkpointY, "checkpoint");
-            colorSwitch = checkpoint.animations.add("colorSwitch");
+            checkpoint.scale.setTo(0.1,0.1);
+            game.add.tween(checkpoint.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
+            checkpoint.animations.add("colorSwitch");
             appleLayer.add(checkpoint);
             checkpointExists = true;
         } else {
