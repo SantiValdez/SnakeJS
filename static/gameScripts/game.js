@@ -8,6 +8,7 @@ var snake,
 //apple vars
 var apple,
     appleExists,
+    appleEmitter,
     appleSpawnRate;
 
 //lock vars
@@ -51,7 +52,8 @@ var score,
     canWrap = true;
 
 //obstacle vars
-var obstacles;
+var obstacles,
+    obstacleEmitter;
 
 //player vars
 var playerName;
@@ -72,8 +74,6 @@ socket.on("playerList", function(data){
     });
 
 
-var emitter;
-
 var Game = {
 
     
@@ -87,11 +87,12 @@ var Game = {
         game.load.image("snakeBodyAnim", "/snake/snakeBodyAnim.png");
         //walls
         game.load.image("obstacle", "/wall/wall.png");
+        game.load.image("obstacleParticle", "/wall/wallParticles/wallParticle.png");
         //locks
         game.load.image("lock", "/lock/lock.png");
         //apples
         game.load.image("apple", "/apple/apple.png");
-        game.load.image("appleParticle", "/apple/appleParticles/particle.png");
+        game.load.image("appleParticle", "/apple/appleParticles/appleParticle.png");
         //powerup
         game.load.atlasJSONHash( "powerUp" , "/powerup/powerUp.png", "/powerup/powerUp.json" );
         //extensions
@@ -110,6 +111,9 @@ var Game = {
         canWrap = true;
 
         game.stage.backgroundColor = "#36393d";
+
+        Phaser.Camera.x = -10;
+        Phaser.Camera.y = 10;
     
         snake = [];
         segmentSize = 20;
@@ -153,7 +157,7 @@ var Game = {
 
         //generating snake, increasing X each iteration
         for(var i = 0; i < 10; i++){
-            snake[i] = game.add.sprite(300 + i * segmentSize, 20 * segmentSize, "snakeBody" );
+            snake[i] = game.add.sprite(300 + i * segmentSize,20 * segmentSize, "snakeBody" );
             snake[i].animations.add("pickupAnim");
             snakeLayer.add(snake[i]);
         }
@@ -302,22 +306,22 @@ var Game = {
 function wrapSnake(){
     head = snake[snake.length - 1];
     if(head.x < 0){
-        head.x = 780;
+        head.x = 800 - segmentSize;
     }
-    if(head.x > 780){
+    if(head.x > 800 - segmentSize){
         head.x = 0;
     }
     if(head.y < 0){
-        head.y = 780;
+        head.y = 800 - segmentSize;
     }
-    if(head.y > 780){
+    if(head.y > 800 - segmentSize){
         head.y = 0;
     }
 }
 
 function containSnake(){
     head = snake[snake.length -1];
-    if(head.x < 0 || head.x > 780 || head.y < 0 || head.y > 780){
+    if(head.x < 0 || head.x > (800 - segmentSize) || head.y < 0 || head.y > (800 - segmentSize)){
         game.state.start("Over");
     }
 }
@@ -424,8 +428,8 @@ function generateApple(){
             appleExists = true;
 
             
-            emitter = game.add.emitter(apple.x, apple.y);
-            emitter.makeParticles("appleParticle");
+            appleEmitter = game.add.emitter(apple.x, apple.y);
+            appleEmitter.makeParticles("appleParticle");
         } else {
             console.log("Skipping apple generation for now!");
             appleExists = false;
@@ -449,7 +453,7 @@ function pickUpApple(){
     appleExists = false;
     appleSpawnRate = 0;
     score++;
-    emitter.start(true, 300, null, 6);
+    appleEmitter.start(true, 300, null, 6);
 }
 
 function generateLock(){
@@ -532,7 +536,7 @@ function pickUpExtension(){
 }
 
 function generateCheckpoint(){
-    if(!checkpointExists && obstacles.length >= 0){
+    if(!checkpointExists && obstacles.length >= 20){
 
         var position = getRandomPos();
         
@@ -601,12 +605,16 @@ function extendSnake(amount){
 
     if(!amount || amount <= 0){
         newSegment = game.add.sprite(lastSegment.x, lastSegment.y, "snakeBodyAnim")
+        newSegment.scale.setTo(0.1,0.1);
+        game.add.tween(newSegment.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
         console.log("added segment!");
         snake.unshift(newSegment);
         snakeLayer.add(newSegment);
     } else {
         for (var i = 0; i < amount; i++) {
             newSegment = game.add.sprite(lastSegment.x, lastSegment.y, "snakeBodyAnim");
+            newSegment.scale.setTo(0.1,0.1);
+            game.add.tween(newSegment.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
             console.log("added segment!");
             snake.unshift(newSegment);
             snakeLayer.add(newSegment);
@@ -651,8 +659,8 @@ function getRandomPos(){
     var result = [];
     var x, y;
 
-    x = random(780 / segmentSize);
-    y = random(780 / segmentSize);
+    x = random((800 - segmentSize) / segmentSize);
+    y = random((800 - segmentSize) / segmentSize);
     x *= segmentSize;
     y *= segmentSize;
 
