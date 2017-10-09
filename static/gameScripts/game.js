@@ -15,6 +15,7 @@ var apple,
 var lock, 
     lockExists,
     lockSpawnRate,
+    lockEmitter,
     lockDuration;
 
 
@@ -90,6 +91,7 @@ var Game = {
         game.load.image("obstacleParticle", "/wall/wallParticles/wallParticle.png");
         //locks
         game.load.image("lock", "/lock/lock.png");
+        game.load.image("lockParticle", "/lock/lockParticles/lockParticle.png");
         //apples
         game.load.image("apple", "/apple/apple.png");
         game.load.image("appleParticle", "/apple/appleParticles/appleParticle.png");
@@ -97,6 +99,7 @@ var Game = {
         game.load.atlasJSONHash( "powerUp" , "/powerup/powerUp.png", "/powerup/powerUp.json" );
         //extensions
         game.load.atlasJSONHash( "extension" , "/extension/extension.png", "/extension/extension.json" );
+        game.load.image("extensionParticle", "/extension/extensionParticles/extensionParticle.png");
         //checkpoint
         game.load.atlasJSONHash( "checkpoint" , "/checkpoint/checkpoint.png", "/checkpoint/checkpoint.json" );
         // game.load.atlasJSONHash( "checkpointSpawn" , "/checkpoint/checkpointSpawn.png", "/checkpoint/checkpointSpawn.json" );      
@@ -472,6 +475,9 @@ function generateLock(){
             game.add.tween(lock.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
             appleLayer.add(lock);
             lockExists = true;
+
+            lockEmitter = game.add.emitter(lock.x, lock.y);
+            lockEmitter.makeParticles("lockParticle");
         } else {
             console.log("Skipping lock generation for now!");
             lockExists = false;
@@ -494,10 +500,11 @@ function pickUpLock(){
     lock.destroy();
     lockExists = false;
     score += 10;
+    lockEmitter.start(true, 300, null, 4);
 }
 
 function generateExtension(){
-    if(!extensionExists && extensionSpawnRate > 1000 && snake.length < 30){
+    if(!extensionExists && extensionSpawnRate > 0 && snake.length < 30){
 
         extensionSpawnRate = 0;
 
@@ -511,6 +518,9 @@ function generateExtension(){
             colorSwitch = extension.animations.add("colorSwitch");
             appleLayer.add(extension);
             extensionExists = true;
+
+            extensionEmitter = game.add.emitter(extension.x, extension.y);
+            extensionEmitter.makeParticles("extensionParticle");
         } else {
             console.log("Skipping extension generation for now!");
             extensionExists = false;
@@ -533,6 +543,7 @@ function pickUpExtension(){
     extension.destroy();
     extensionExists = false;
     score += 15;
+    extensionEmitter.start(false, 300, 20, 4);
 }
 
 function generateCheckpoint(){
@@ -592,6 +603,12 @@ function isSpaceEmpty(x, y){
         }
     }
 
+    for (var i = 0; i < obstacles.length; i++) {
+        if(obstacles[i].x === x && obstacles[i].y === y){
+            return false;
+        }
+    }
+
     if(apple && apple.x === x && apple.y === y){
         return false;
     }
@@ -605,8 +622,6 @@ function extendSnake(amount){
 
     if(!amount || amount <= 0){
         newSegment = game.add.sprite(lastSegment.x, lastSegment.y, "snakeBodyAnim")
-        newSegment.scale.setTo(0.1,0.1);
-        game.add.tween(newSegment.scale).to( { x: 1, y: 1 }, 200, Phaser.Easing.Linear.None, true);
         console.log("added segment!");
         snake.unshift(newSegment);
         snakeLayer.add(newSegment);
