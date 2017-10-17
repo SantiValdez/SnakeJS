@@ -3,7 +3,11 @@
 var snake,
     snakeDirection,
     newDirection,
-    segmentSize;
+    segmentSize,
+    firstSegment,
+    lastSegment,
+    firstSegmentX,
+    firstSegmentY;
 
 //apple vars
 var apple,
@@ -47,7 +51,8 @@ var score,
     frameRate,
     gameWidth,
     gameHeight,
-    appleLayer,         //layers so that snake body goes over the apples
+    //layers so that snake body overlaps the apples
+    appleLayer,
     snakeLayer,
     frontLayer,
     canWrap = true;
@@ -77,7 +82,6 @@ socket.on("playerList", function(data){
 
 var Game = {
 
-    
     preload: function(){
         //snake
         game.load.image("snakeHeadLeft", "/snake/snakeHeadLeft.png");
@@ -113,7 +117,7 @@ var Game = {
 
         canWrap = true;
 
-        game.stage.backgroundColor = "#36393d";
+        game.stage.backgroundColor = "rgb(35, 60, 80)";
 
         Phaser.Camera.x = -10;
         Phaser.Camera.y = 10;
@@ -196,40 +200,13 @@ var Game = {
 
             scaleSnake(1);
 
-            var firstSegment = snake[snake.length - 1];
-            var lastSegment = snake.shift();
-            var firstSegmentX = firstSegment.x;
-            var firstSegmentY = firstSegment.y;
+            firstSegment = snake[snake.length - 1];
+            lastSegment = snake.shift();
+            firstSegmentX = firstSegment.x;
+            firstSegmentY = firstSegment.y;
 
             checkNewDirection();
-    
-            if(snakeDirection === "left"){
-                lastSegment.x = firstSegmentX - segmentSize;
-                lastSegment.y = firstSegmentY;
-                lastSegment.loadTexture("snakeHeadLeft");
-                firstSegment.loadTexture("snakeBody");
-            }
-    
-            if(snakeDirection === "right"){
-                lastSegment.x = firstSegmentX + segmentSize;
-                lastSegment.y = firstSegmentY;
-                lastSegment.loadTexture("snakeHeadRight");
-                firstSegment.loadTexture("snakeBody");
-            }
-    
-            if(snakeDirection === "up"){
-                lastSegment.x = firstSegmentX;
-                lastSegment.y = firstSegmentY - segmentSize;
-                lastSegment.loadTexture("snakeHeadUp");
-                firstSegment.loadTexture("snakeBody");
-            }
-    
-            if(snakeDirection === "down"){
-                lastSegment.x = firstSegmentX;
-                lastSegment.y = firstSegmentY + segmentSize;
-                lastSegment.loadTexture("snakeHeadDown");
-                firstSegment.loadTexture("snakeBody");
-            }
+            moveSnakeInDirection();
     
             snake.push(lastSegment);
             firstSegment = lastSegment; 
@@ -306,6 +283,36 @@ var Game = {
     }
 }   
 
+function moveSnakeInDirection(){
+    if(snakeDirection === "left"){
+        lastSegment.x = firstSegmentX - segmentSize;
+        lastSegment.y = firstSegmentY;
+        lastSegment.loadTexture("snakeHeadLeft");
+        firstSegment.loadTexture("snakeBody");
+    }
+
+    if(snakeDirection === "right"){
+        lastSegment.x = firstSegmentX + segmentSize;
+        lastSegment.y = firstSegmentY;
+        lastSegment.loadTexture("snakeHeadRight");
+        firstSegment.loadTexture("snakeBody");
+    }
+
+    if(snakeDirection === "up"){
+        lastSegment.x = firstSegmentX;
+        lastSegment.y = firstSegmentY - segmentSize;
+        lastSegment.loadTexture("snakeHeadUp");
+        firstSegment.loadTexture("snakeBody");
+    }
+
+    if(snakeDirection === "down"){
+        lastSegment.x = firstSegmentX;
+        lastSegment.y = firstSegmentY + segmentSize;
+        lastSegment.loadTexture("snakeHeadDown");
+        firstSegment.loadTexture("snakeBody");
+    }
+}
+
 function wrapSnake(){
     head = snake[snake.length - 1];
     if(head.x < 0){
@@ -325,7 +332,7 @@ function wrapSnake(){
 function containSnake(){
     head = snake[snake.length -1];
     if(head.x < 0 || head.x > (800 - segmentSize) || head.y < 0 || head.y > (800 - segmentSize)){
-        game.state.start("Over");
+        game.state.start("Over", Phaser.Plugin.StateTransition.Out.SlideLeft, Phaser.Plugin.StateTransition.In.SlideLeft);
     }
 }
 
@@ -374,7 +381,6 @@ function checkCollision(snake){
 }
 
 function generatePowerUp(){
-
     if(!powerUpExists && powerUpSpawnRate > 150){
 
         var position = getRandomPos();
@@ -504,7 +510,7 @@ function pickUpLock(){
 }
 
 function generateExtension(){
-    if(!extensionExists && extensionSpawnRate > 0 && snake.length < 30){
+    if(!extensionExists && extensionSpawnRate > 500 && snake.length < 50 && obstacles.length > 9){
 
         extensionSpawnRate = 0;
 
@@ -669,22 +675,40 @@ function scaleSnake(amount){
     }
 }
 
-//returns an array with a valid random X and Y coordinate
+// returns an array with a valid random X and Y coordinate
 function getRandomPos(){
     var result = [];
     var x, y;
 
-    x = random((800 - segmentSize) / segmentSize);
-    y = random((800 - segmentSize) / segmentSize);
+    x = game.rnd.integerInRange(0, (800 - segmentSize) / segmentSize);
+    y = game.rnd.integerInRange(0, (800 - segmentSize) / segmentSize);
     x *= segmentSize;
     y *= segmentSize;
+    
+    switch(x){
+        case 0: 
+            x += segmentSize;
+            break;
+        case 800:
+            x -= segmentSize;
+            break;
+        default:
+            x = x;
+    }
+
+    switch(y){
+        case 0: 
+            y += segmentSize;
+            break;
+        case 800:
+            y -= segmentSize;
+            break;
+        default:
+            y = y;
+    }
 
     result.push(x);
     result.push(y);
 
     return result;
-}
-
-function random(max){
-    return Math.floor(Math.random() * max) + 1;
 }

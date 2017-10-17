@@ -28,8 +28,8 @@ var Menu = {
 
         canvas = $("canvas").first().css("border", "none");
 
-        game.stage.backgroundColor = "#36393d";
-        start = game.add.text(game.width / 2 + 0.5, 300 + 0.5, "ssstart!", {
+        game.stage.backgroundColor = "rgb(35, 60, 80)";
+        start = game.add.text(game.width / 2 + 0.5, 300 + 0.5, "GO!", {
             font: "Ubuntu",
             fontWeight: "bold",
             fontSize: 100,

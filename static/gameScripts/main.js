@@ -1,5 +1,6 @@
 
-var game = new Phaser.Game(800, 800, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 800, Phaser.CANVAS, 'gameContainer', { preload: preload, create: create, update: update });
+
 
 game.state.add('Menu', Menu);
 game.state.add('Game', Game);
