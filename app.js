@@ -5,6 +5,7 @@ var express    = require("express"),
     io         = require('socket.io').listen(server),
     indexRoute = require("./routes/index.js"),
     mongoose   = require("mongoose"),
+    flash      = require("connect-flash");
     Player     = require("./models/player");
 
 mongoose.connect("mongodb://localhost:27017/snake_js");
@@ -14,6 +15,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('static'));
 app.use(express.static('assets'));
 app.use(indexRoute);
+app.use(flash());
+
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    next();
+ });
 
 io.sockets.on("connection", function(socket){
     

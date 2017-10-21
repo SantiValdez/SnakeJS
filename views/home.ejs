@@ -9,7 +9,11 @@
 
     <form action="/play" method="POST">
         <div class="form-group col-md-4 col-offset-4 form-center text-center">
-            <label class="col-form-label" for="nickname">Nickname</label>
+            <% if(message !== "Nickname"){ %>
+                <label id="error-msg" class="col-form-label" for="nickname"><%= message %></label>
+            <% }else{ %>
+                <label class="col-form-label" for="nickname"><%= message %></label>
+            <% } %>
             <input class="form-control" type="nickname" id="nickname" name="nickname" placeholder="Choose a Nickname">
             <button id="btn-signin" class="form-btn" type="submit">
                 PLAY

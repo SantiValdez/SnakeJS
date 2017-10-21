@@ -4,7 +4,7 @@ var router = express.Router();
 
 
 router.get("/", function(req, res){
-    res.render("home");
+    res.render("home", {message:"Nickname"});
 });
 
 router.get("/play", function(req, res){
@@ -19,8 +19,7 @@ router.post("/play", function(req, res){
         if(err){
             console.log(err);
         } else {
-            // if the return value of findOne is null
-            // it means there were no matches
+            // if returns null == no matches
             if(foundPlayer === null){
                 var player = new Player({
                     nickname: nickname,
@@ -35,10 +34,11 @@ router.post("/play", function(req, res){
                     }
                 });     
             } else {
-                res.send("Nickname taken, choose another!");
+                res.render("home", {message:"Name taken, pick another!"});
             }
         }
     });
 });
+
 
 module.exports = router;
