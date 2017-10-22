@@ -47,7 +47,6 @@ var left,
 //game vars
 var score,
     scoreDisplay,
-    speed,
     frameRate,
     gameWidth,
     gameHeight,
@@ -150,7 +149,6 @@ var Game = {
         frontLayer = game.add.group();
         score = 0;
         frameRate = 0;
-        speed = 0;
         gameWidth = 800;
         gameHeight = 800;
 
@@ -190,13 +188,11 @@ var Game = {
         game.world.bringToTop(frontLayer);
         getDirection();
 
-        speed = Math.min(4, Math.floor(score/2));
-        // Increase a counter on every update call.
         frameRate++;
 
         scoreDisplay.text = score;
 
-        if(frameRate % (6 - speed) === 0){
+            if(frameRate % 2 === 0){
 
             scaleSnake(1);
 

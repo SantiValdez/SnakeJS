@@ -5,18 +5,26 @@ body {
     padding: 0;
     color: white;
 }
-button:focus{
-    outline: 0;
+
+h1{
+    font-size: 10em;
+}
+h3{
+    font-weight: lighter;
 }
 hr{
     border-top: 1px solid rgba(0, 0, 0, 0.3);
 }
-input[type="nickname"]{
-    background-color: #B0B0CE;
+
+canvas{
+    margin: 40px auto 0px auto;
+    transition: border 1s, background-color 2s;
 }
-input[type="nickname"]:focus{
-    background-color: #B0B0CE;
-    outline-color: rgb(226, 103, 226);
+
+.form-center{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
 }
 .form-btn{
     display: inline-block;
@@ -37,28 +45,25 @@ input[type="nickname"]:focus{
     transform: translateY(-10px);
     box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.2);
 }
-.add-opacity{
-    opacity: 1 !important;
+button:focus{
+    outline: 0;
+}
+input[type="nickname"]{
+    background-color: #B0B0CE;
+}
+input[type="nickname"]:focus{
+    background-color: #B0B0CE;
+    outline-color: rgb(226, 103, 226);
+}
+
+#title-container{
+    margin-bottom: 60px;
 }
 #title-js{
     color: rgb(75, 212, 139);
 }
-.form-center{
-    width: 50%;
-    margin-left: auto;
-    margin-right: auto;
-}
-#title-container{
-    margin-bottom: 60px;
-}
 #error-msg{
     color: rgb(255, 190, 205);
-}
-h1{
-    font-size: 10em;
-}
-h3{
-    font-weight: lighter;
 }
 #player-name-display{
     letter-spacing: 5px;
@@ -69,9 +74,11 @@ h3{
     left: 50px;
     float: left;
 }
-canvas{
-    margin: 40px auto 0px auto;
-    transition: border 1s, background-color 2s;
+
+thead > tr{
+    background-color: rgb(76, 212, 149);
+
+    color: white;
 }
 #leaderboards{
     width: 500px;
@@ -92,11 +99,6 @@ canvas{
 #leaderboards td:nth-child(2n){
     text-align: center;
     font-weight: bold;
-}
-thead > tr{
-    background-color: rgb(76, 212, 149);
-
-    color: white;
 }
 #leaderboards th{
     font-weight: lighter;
